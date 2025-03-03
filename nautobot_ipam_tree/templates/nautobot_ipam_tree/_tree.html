@@ -1,0 +1,21 @@
+<!-- Dropdown for namespaces -->
+<i class='bx bx-home-alt'> </i>
+<select id="namespace-dropdown">
+    {% for ns in select_namespaces %}
+        <option value="{{ ns.href }}"  {% if object.namespace.name == ns.name %}selected{%endif %}>
+            {{ ns.name }}</option>
+    {% endfor %}
+</select>
+<select id="version-dropdown">
+    {% for ver in select_versions %}
+        <option
+            value="{{ ver.href }}"
+            {% if object.ip_version == ver.version %} selected {% endif %}
+            {% if not ver.href %} disabled {% endif %}>
+            IPv{{ ver.version }}{% if not ver.href %} (no prefix){% endif %}
+        </option>
+    {% endfor %}
+</select>
+<br>
+<!-- Existing tree element -->
+<div id="ipam-tree">If you see this, tree is fucked</div>

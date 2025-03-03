@@ -1,0 +1,67 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+<script>
+    // namespace dropdown
+    $("#namespace-dropdown, #version-dropdown").on("change", function() {
+        var url = $(this).val();
+        if (url) {
+            window.location.href = url;
+        }
+    });
+
+    var selected_node_id = "{{ object.id }}"
+    $("#ipam-tree")
+    // click on icon to toggle
+    .on('click', '.jstree-icon', function (e) {
+        $('#ipam-tree').jstree(true).toggle_node(e.target);
+    })
+    .jstree({
+        "core": {
+            "animation" : 0,
+            "dblclick_toggle" : false,
+            "data": {
+                "url": function(node) {
+                    return node.id === "#" ?
+                        "/plugins/nautobot-ipam-tree/api/prefix-children/{{ object.id }}?root=1" :
+                        "/plugins/nautobot-ipam-tree/api/prefix-children/" + node.id;
+                },
+                "data": function(node) {
+                    return {"id": node.id};
+                }
+            }
+        }
+    })
+    // after loaded, check there is nodechain to expand and select
+    .on("loaded.jstree", function() {
+        node_chain_api = "/plugins/nautobot-ipam-tree/api/node-chain/{{ object.id }}"
+
+        fetch(node_chain_api)
+            .then(response => response.json())
+            .then(chain => {
+                const tree = $('#ipam-tree').jstree(true);
+
+                // function to expand and select nodes one by one
+                function expandAndSelectNodes(chain, index) {
+                    if (index >= chain.length) return;  // Base case: If we have processed all nodes in the chain, stop
+                    const nodeId = chain[index];
+                    const node = tree.get_node(nodeId);
+                    if (node) {
+                        //console.log(`Found node with ID: ${nodeId}`, node);
+                        // If it's not the last node, open it
+                        if (index < chain.length - 1) {
+                            tree.open_node(node, function() {
+                                // After the node is opened and lazy-loaded, recursively process the next node
+                                expandAndSelectNodes(chain, index + 1);
+                            });
+                        } else {
+                            tree.select_node(node);
+                            tree.open_node(node);
+                            //console.log(`Selected the last node with ID: ${nodeId}`);
+                        }
+                    } else {
+                      console.log(`Node not found for ID: ${nodeId}`);
+                    }
+                }
+                expandAndSelectNodes(chain, 0);
+            })
+    })
+</script>

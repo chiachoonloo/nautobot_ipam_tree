@@ -1,0 +1,20 @@
+{% extends 'ipam/prefix.html' %}
+
+{% block header %}
+{% include "nautobot_ipam_tree/_header.html" %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div style="float: left;">
+        {% include "nautobot_ipam_tree/_tree.html" %}
+    </div>
+    <div style="float: none; overflow: hidden;">
+        {{ block.super }}
+    </div>
+{% endblock %}
+
+{% block javascript %}
+{% include "nautobot_ipam_tree/_javascript.html" %}
+{{ block.super }}
+{% endblock %}
