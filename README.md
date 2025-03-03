@@ -15,8 +15,15 @@ the css/icons/jstree are all linked from internet in the templates.
 
 There are some hardcode references that you should take note of:
 views.py
-	- uses ipaddress python module, needs installation
-	- class StartView has a hardcode namespace name of "Global"
-	- def _get_prefix_data (used by class PrefixChildrenView) has reference to prefix__role__name of "cust_transit/cust_routed"
-		this only sets the icon, it is meant for my own customized usage
+- uses ipaddress python module, needs installation
+- class StartView has a hardcode namespace name of "Global"
+- def _get_prefix_data (used by class PrefixChildrenView) has reference to prefix__role__name of "cust_transit/cust_routed", this only sets the icon, it is meant for my own customized usage
 
+**Installation**
+i didnt package this as a proper pip installer as i run a docker styled nautobot.
+
+Copy the nautobot_ipam_tree folder to one of your Python Path directory so Nautobot could access it
+
+nautobot_config.py Plugins section needs to have this app installed
+
+PLUGINS = ["nautobot_plugin_nornir", "nautobot_golden_config", "nautobot_ipam_tree"]
